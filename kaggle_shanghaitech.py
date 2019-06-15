@@ -36,17 +36,6 @@ __DATASET_ROOT = "../input/shanghaitech_h5_empty/ShanghaiTech/"
 __OUTPUT_NAME = "ShanghaiTechDensityMapH5/"
 
 
-COUNT = 0
-def increment_counter():
-    """
-    global counter to show status
-    :return:
-    """
-    global COUNT
-    COUNT = COUNT+1
-    print("count ", str(COUNT))
-    return COUNT
-
 def gaussian_filter_density(gt):
     print(gt.shape)
     density = np.zeros(gt.shape, dtype=np.float32)
@@ -111,7 +100,6 @@ def generate_density_map(img_path):
     output_dir = os.path.dirname(output_path)
     os.makedirs(output_dir, exist_ok=True)
     print("output", output_path)
-    increment_counter()
     sys.stdout.flush()
     with h5py.File(output_path, 'w') as hf:
         hf['density'] = k
