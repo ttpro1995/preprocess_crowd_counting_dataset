@@ -28,8 +28,11 @@ import h5py
 import time
 from sklearn.externals.joblib import Parallel, delayed
 
+# directory contain partA, partB
 __DATASET_ROOT = "../input/shanghaitech_h5_empty/ShanghaiTech/"
-__OUTPUT_NAME = "ShanghaiTech_PartA_Test/"
+
+# directory (folder) contain output file
+__OUTPUT_NAME = "ShanghaiTechDensityMapH5/"
 
 
 def gaussian_filter_density(gt):
@@ -61,6 +64,11 @@ def gaussian_filter_density(gt):
 
 
 def single_sample_prototype():
+    """
+    for testing or debuging only
+    not use when run
+    :return:
+    """
     img_path = '/data/dump/ShanghaiTech/part_A/train_data/images/IMG_2.jpg'
     print(img_path)
     mat_path = "/data/dump/ShanghaiTech/part_A/train_data/ground-truth/GT_IMG_2.mat"
@@ -97,6 +105,11 @@ def generate_density_map(img_path):
 
 
 def generate_shanghaitech_path(root):
+    """
+
+    :param root: directory contain part_A and part_B
+    :return:
+    """
     # now generate the ShanghaiA's ground truth
     part_A_train = os.path.join(root, 'part_A/train_data', 'images')
     part_A_test = os.path.join(root, 'part_A/test_data', 'images')
@@ -131,7 +144,8 @@ if __name__ == "__main__":
     a_train, a_test, b_train, b_test = generate_shanghaitech_path(__DATASET_ROOT)
 
     SMALL_SET = a_test[:50]
-
-    Parallel(n_jobs=4)(delayed(generate_density_map)(p) for p in SMALL_SET)
-
+    all_set = [a_train, a_test, b_train, b_test]
+    for path_set in all_set:
+        Parallel(n_jobs=8)(delayed(generate_density_map)(p) for p in path_set)
+        print("Complete 1 set")
     print("--- %s seconds ---" % (time.time() - start_time))

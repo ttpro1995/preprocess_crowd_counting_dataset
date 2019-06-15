@@ -95,6 +95,7 @@ def generate_shanghaitech_path():
 
     return img_paths_a_train, img_paths_a_test, img_paths_b_train, img_paths_b_test
 
+
 if __name__ == "__main__":
     """
     TODO: this file will preprocess crowd counting dataset
@@ -106,6 +107,5 @@ if __name__ == "__main__":
     a_train, a_test, b_train, b_test = generate_shanghaitech_path()
 
     Parallel(n_jobs=4)(delayed(generate_density_map)(p) for p in a_train)
-
 
     print("--- %s seconds ---" % (time.time() - start_time))
