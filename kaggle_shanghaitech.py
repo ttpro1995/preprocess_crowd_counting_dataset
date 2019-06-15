@@ -27,6 +27,7 @@ import glob
 import h5py
 import time
 from sklearn.externals.joblib import Parallel, delayed
+import sys
 
 # directory contain partA, partB
 __DATASET_ROOT = "../input/shanghaitech_h5_empty/ShanghaiTech/"
@@ -34,6 +35,17 @@ __DATASET_ROOT = "../input/shanghaitech_h5_empty/ShanghaiTech/"
 # directory (folder) contain output file
 __OUTPUT_NAME = "ShanghaiTechDensityMapH5/"
 
+
+COUNT = 0
+def increment_counter():
+    """
+    global counter to show status
+    :return:
+    """
+    global COUNT
+    COUNT = COUNT+1
+    print("count ", str(COUNT))
+    return COUNT
 
 def gaussian_filter_density(gt):
     print(gt.shape)
@@ -50,7 +62,7 @@ def gaussian_filter_density(gt):
     # query kdtree
     distances, locations = tree.query(pts, k=4)
 
-    print('generate density...')
+    # print('generate density...')
     for i, pt in enumerate(pts):
         pt2d = np.zeros(gt.shape, dtype=np.float32)
         pt2d[pt[1], pt[0]] = 1.
@@ -59,7 +71,7 @@ def gaussian_filter_density(gt):
         else:
             sigma = np.average(np.array(gt.shape)) / 2. / 2.  # case: 1 point
         density += scipy.ndimage.filters.gaussian_filter(pt2d, sigma, mode='constant')
-    print('done.')
+    # print('done.')
     return density
 
 
@@ -99,6 +111,8 @@ def generate_density_map(img_path):
     output_dir = os.path.dirname(output_path)
     os.makedirs(output_dir, exist_ok=True)
     print("output", output_path)
+    increment_counter()
+    sys.stdout.flush()
     with h5py.File(output_path, 'w') as hf:
         hf['density'] = k
     return img_path
